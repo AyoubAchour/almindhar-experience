@@ -1,103 +1,187 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  
+  // Get the current user's session
+  const { data: { session } } = await supabase.auth.getSession();
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+              Discover Tunisian Adventures
+            </h1>
+            <p className="mt-6 text-xl leading-7 max-w-2xl">
+              Experience the beauty and culture of Tunisia through immersive adventures and unique experiences.
+            </p>
+            <div className="mt-10 flex flex-col sm:flex-row gap-4">
+              <Link 
+                href="/experiences" 
+                className="rounded-md bg-white px-5 py-3 text-center font-medium text-blue-600 hover:bg-gray-50"
+              >
+                Explore Experiences
+              </Link>
+              {!session ? (
+                <Link 
+                  href="/auth/signup" 
+                  className="rounded-md bg-blue-400 bg-opacity-20 px-5 py-3 text-center font-medium text-white hover:bg-opacity-30"
+                >
+                  Sign Up
+                </Link>
+              ) : (
+                <Link 
+                  href="/profile" 
+                  className="rounded-md bg-blue-400 bg-opacity-20 px-5 py-3 text-center font-medium text-white hover:bg-opacity-30"
+                >
+                  My Profile
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      
+      {/* Featured Section */}
+      <div className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Unforgettable Experiences
+            </h2>
+            <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+              Play mini-games to preview and earn rewards on your next adventure.
+            </p>
+          </div>
+          
+          <div className="mt-12 grid gap-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-12">
+            {/* Desert Rider Experience */}
+            <div className="group relative bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow">
+              <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-t-lg overflow-hidden">
+                <div className="h-48 w-full bg-gradient-to-r from-yellow-400 to-orange-500"></div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900">Desert Rider</h3>
+                <p className="mt-2 text-sm text-gray-500">Experience the Sahara desert on a camel ride adventure.</p>
+                <div className="mt-4">
+                  <Link 
+                    href="/experiences"
+                    className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500"
+                  >
+                    Learn more
+                    <svg className="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            
+            {/* Skyfall Simulator */}
+            <div className="group relative bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow">
+              <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-t-lg overflow-hidden">
+                <div className="h-48 w-full bg-gradient-to-r from-blue-400 to-cyan-500"></div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900">Skyfall Simulator</h3>
+                <p className="mt-2 text-sm text-gray-500">Experience the thrill of parachuting with amazing views.</p>
+                <div className="mt-4">
+                  <Link 
+                    href="/experiences"
+                    className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500"
+                  >
+                    Learn more
+                    <svg className="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            
+            {/* Coral Reef Explorer */}
+            <div className="group relative bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow">
+              <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-t-lg overflow-hidden">
+                <div className="h-48 w-full bg-gradient-to-r from-teal-400 to-blue-500"></div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900">Coral Reef Explorer</h3>
+                <p className="mt-2 text-sm text-gray-500">Discover the underwater world of Tunisia&apos;s coral reefs.</p>
+                <div className="mt-4">
+                  <Link 
+                    href="/experiences"
+                    className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500"
+                  >
+                    Learn more
+                    <svg className="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* How It Works */}
+      <div className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              How It Works
+            </h2>
+          </div>
+          
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <div className="text-center">
+              <div className="mx-auto h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">1</span>
+              </div>
+              <h3 className="mt-4 text-lg font-medium text-gray-900">Play Mini-Games</h3>
+              <p className="mt-2 text-base text-gray-500">Try out our interactive games that simulate the real experiences.</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="mx-auto h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">2</span>
+              </div>
+              <h3 className="mt-4 text-lg font-medium text-gray-900">Earn Rewards</h3>
+              <p className="mt-2 text-base text-gray-500">Score high to unlock discounts and special badges.</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="mx-auto h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">3</span>
+              </div>
+              <h3 className="mt-4 text-lg font-medium text-gray-900">Book Adventures</h3>
+              <p className="mt-2 text-base text-gray-500">Use your rewards to book real-life adventures in Tunisia.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* CTA Section */}
+      <div className="bg-blue-600">
+        <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+            <span className="block">Ready for your next adventure?</span>
+          </h2>
+          <p className="mt-4 text-lg leading-6 text-blue-100">
+            Sign up now and start exploring the amazing experiences Tunisia has to offer.
+          </p>
+          <Link
+            href={session ? "/experiences" : "/auth/signup"}
+            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 sm:w-auto"
+          >
+            {session ? "Explore Experiences" : "Get Started"}
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
