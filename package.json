@@ -2,6 +2,7 @@
   "name": "almindhar-experience",
   "version": "0.1.0",
   "private": true,
+  "description": "A web platform for booking Tunisian adventures with integrated mini-games",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
