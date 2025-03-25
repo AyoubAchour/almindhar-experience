@@ -18,63 +18,19 @@ export function ExperienceList({
 }: ExperienceListProps) {
   const ITEMS_PER_PAGE = 10;
   
-  // State for filtered experiences based on search and filters
-  const [filteredExperiences, setFilteredExperiences] = useState<Experience[]>(experiences);
-  
   // State for currently visible experiences (subset of filtered)
   const [currentPage, setCurrentPage] = useState(1);
   
   // Calculate visible experiences based on current page
-  const visibleExperiences = filteredExperiences.slice(0, currentPage * ITEMS_PER_PAGE);
+  const visibleExperiences = experiences.slice(0, currentPage * ITEMS_PER_PAGE);
   
   // Boolean to check if there are more experiences to load
-  const hasMoreToLoad = visibleExperiences.length < filteredExperiences.length;
+  const hasMoreToLoad = visibleExperiences.length < experiences.length;
 
-  // Apply filters and search query
+  // Reset pagination when experiences array changes
   useEffect(() => {
-    let result = [...experiences];
-
-    // Apply difficulty filter
-    if (filters.difficulty.length > 0) {
-      result = result.filter((exp) =>
-        filters.difficulty.includes(exp.difficulty)
-      );
-    }
-
-    // Apply price range filter
-    result = result.filter(
-      (exp) =>
-        exp.price >= filters.priceRange[0] &&
-        exp.price <= filters.priceRange[1]
-    );
-
-    // Apply duration filter
-    result = result.filter(
-      (exp) =>
-        exp.duration >= filters.duration[0] &&
-        exp.duration <= filters.duration[1]
-    );
-
-    // Apply location filter
-    if (filters.location) {
-      result = result.filter((exp) => exp.location === filters.location);
-    }
-
-    // Apply search query
-    if (searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (exp) =>
-          exp.title.toLowerCase().includes(query) ||
-          exp.description.toLowerCase().includes(query) ||
-          exp.location.toLowerCase().includes(query)
-      );
-    }
-
-    // Update filtered experiences and reset to page 1
-    setFilteredExperiences(result);
     setCurrentPage(1);
-  }, [experiences, filters, searchQuery]);
+  }, [experiences]);
 
   // Handle load more button click
   const handleLoadMore = () => {
@@ -82,7 +38,7 @@ export function ExperienceList({
   };
 
   // If no experiences match the filters
-  if (filteredExperiences.length === 0) {
+  if (experiences.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
         <svg
