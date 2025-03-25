@@ -1,11 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-export default function VerifyPage() {
+// Wrapper component that provides Suspense boundary
+export default function VerifyPageWrapper() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+        <p className="text-lg text-center">Chargement...</p>
+      </div>
+    }>
+      <VerifyPage />
+    </Suspense>
+  );
+}
+
+// The actual component with the verification logic
+function VerifyPage() {
   const [message, setMessage] = useState("Finalizing your account...");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();

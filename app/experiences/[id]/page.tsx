@@ -363,14 +363,15 @@ async function ExperienceDetail({ id }: { id: string }) {
   );
 }
 
-export default function ExperienceDetailPage({
+export default async function ExperienceDetailPage({
   params,
 }: Readonly<{
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }>) {
+  const resolvedParams = await params;
   return (
     <Suspense fallback={<div className="p-12 text-center">Chargement de l'expérience...</div>}>
-      <ExperienceDetail id={params.id} />
+      <ExperienceDetail id={resolvedParams.id} />
     </Suspense>
   );
 }

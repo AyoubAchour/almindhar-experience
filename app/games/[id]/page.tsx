@@ -10,10 +10,11 @@ import { Suspense } from "react";
 export const generateMetadata = async ({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> => {
   // Get game data based on ID
-  const gameData = getGameData(params.id);
+  const resolvedParams = await params;
+  const gameData = getGameData(resolvedParams.id);
   
   if (!gameData) {
     return {
@@ -110,7 +111,7 @@ function getGameData(id: string) {
 }
 
 // Async component to handle data fetching
-async function GameDetailContent({ id }: { id: string }) {
+async function GameDetailContent({ id }: Readonly<{ id: string }>) {
   const supabase = await createClient();
   
   // Check if user is logged in
@@ -386,10 +387,11 @@ async function GameDetailContent({ id }: { id: string }) {
 }
 
 // Main page component that receives params
-export default function GamePage({ params }: Readonly<{ params: { id: string } }>) {
+export default async function GamePage({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
+  const resolvedParams = await params;
   return (
     <Suspense fallback={<div className="p-12 text-center">Chargement du jeu...</div>}>
-      <GameDetailContent id={params.id} />
+      <GameDetailContent id={resolvedParams.id} />
     </Suspense>
   );
 }

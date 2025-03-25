@@ -13,7 +13,39 @@ import { Experience, Booking } from "@/types";
 import { formatPrice, formatDuration } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
-export default function BookingPage({ params }: Readonly<{ params: { id: string } }>) {
+// For client components, we can use a wrapper component pattern
+export default function BookingPageWrapper({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
+  const [resolvedId, setResolvedId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    async function resolveParams() {
+      try {
+        const resolvedParams = await params;
+        setResolvedId(resolvedParams.id);
+      } catch (error) {
+        console.error("Error resolving params:", error);
+      }
+    }
+    
+    resolveParams();
+  }, [params]);
+  
+  if (!resolvedId) {
+    return (
+      <div className="container mx-auto p-8 flex justify-center items-center min-h-screen">
+        <div className="animate-pulse text-center">
+          <div className="h-8 bg-gray-200 rounded w-48 mb-4 mx-auto"></div>
+          <div className="h-4 bg-gray-200 rounded w-64 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  return <BookingPageContent id={resolvedId} />;
+}
+
+// The actual component with all the logic
+function BookingPageContent({ id }: Readonly<{ id: string }>) {
   const router = useRouter();
   const [experience, setExperience] = useState<Experience | null>(null);
   const [gameReward, setGameReward] = useState<{ hasReward: boolean; rewardDiscount?: number } | null>(null);
@@ -28,24 +60,18 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
     async function initialize() {
       setIsLoading(true);
       
-      // Get the experience ID from params
-      const experienceId = params.id;
-      
-      // Check if user is authenticated
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        // Redirect to sign-in if not authenticated
-        router.push(`/sign-in?redirect=/experiences/${experienceId}/booking`);
+        router.push(`/sign-in?redirect=/experiences/${id}/booking`);
         return;
       }
       
       setUser(user);
       
       try {
-        // Fetch experience details
-        const experienceData = await getExperienceById(experienceId);
+        const experienceData = await getExperienceById(id);
         if (!experienceData) {
           setError("L'expérience demandée n'a pas été trouvée.");
           setIsLoading(false);
@@ -54,9 +80,8 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
         
         setExperience(experienceData);
         
-        // If experience has a game, check for rewards
         if (experienceData.has_game) {
-          const gameScores = await getGameScores(experienceId);
+          const gameScores = await getGameScores(id);
           setGameReward({
             hasReward: gameScores.hasReward,
             rewardDiscount: gameScores.rewardDiscount
@@ -71,9 +96,8 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
     }
     
     initialize();
-  }, [router]); // Only depend on router
+  }, [router, id]);
 
-  // Handle booking form submission
   const handleBookingSubmit = async (formData: BookingFormData) => {
     if (!user || !experience) return;
     
@@ -81,15 +105,13 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
     setError(null);
     
     try {
-      // Create booking in database
       const bookingData = {
         user_id: user.id,
         experience_id: experience.id,
         booking_date: new Date(formData.bookingDate).toISOString(),
         number_of_people: formData.numberOfPeople,
-        status: 'confirmed' as Booking['status'], // Fixing the booking status type
+        status: 'confirmed' as Booking['status'],
         total_price: formData.totalPrice,
-        // Include reward_id if applicable in the future
       };
       
       const result = await createBooking(bookingData);
@@ -98,7 +120,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
         throw new Error(result.error || "Échec de la création de la réservation");
       }
       
-      // Set the booking for confirmation display
       setBooking(result.booking!);
       setStep('confirmation');
     } catch (err: any) {
@@ -109,7 +130,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
     }
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
@@ -122,7 +142,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
     );
   }
 
-  // Show error state
   if (error || !experience) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
@@ -163,7 +182,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        {/* Booking Header */}
         <div className="mb-8">
           <Link
             href={`/experiences/${experience.id}`}
@@ -195,7 +213,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
           </p>
         </div>
 
-        {/* Booking Content */}
         {step === 'confirmation' && booking ? (
           <BookingConfirmation
             booking={booking}
@@ -205,7 +222,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Experience Summary */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-6">
                 <div className="relative h-48">
@@ -259,7 +275,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
                     </div>
                   </div>
 
-                  {/* Game Promo */}
                   {experience.has_game && !gameReward?.hasReward && (
                     <div className="mt-4 p-3 bg-indigo-50 rounded-lg">
                       <div className="flex items-center gap-2 text-indigo-700 text-sm">
@@ -299,7 +314,6 @@ export default function BookingPage({ params }: Readonly<{ params: { id: string 
               </div>
             </div>
 
-            {/* Booking Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-md p-6">
                 <BookingForm

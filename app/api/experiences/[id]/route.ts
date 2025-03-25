@@ -3,16 +3,16 @@ import { createClient } from '@/utils/supabase/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  // Ensure params is properly awaited
-  const id = params?.id;
-  
-  if (!id) {
-    return NextResponse.json({ error: "ID d'expérience manquant" }, { status: 400 });
-  }
-  
   try {
+    // Await the params to get the id
+    const { id } = await params;
+    
+    if (!id) {
+      return NextResponse.json({ error: "ID d'expérience manquant" }, { status: 400 });
+    }
+    
     const supabase = await createClient();
     
     const { data, error } = await supabase
