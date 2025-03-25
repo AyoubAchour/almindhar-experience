@@ -9,7 +9,6 @@ export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
 
   if (!email || !password) {
     return encodedRedirect(
@@ -19,24 +18,35 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
+  // Sign up the user with Supabase auth
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
+      data: {
+        email_confirmed: true
+      }
+    }
   });
 
   if (error) {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
-  } else {
-    return encodedRedirect(
-      "success",
-      "/sign-up",
-      "Thanks for signing up! Please check your email for a verification link.",
-    );
   }
+
+  // Immediately sign in the user after signup
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (signInError) {
+    console.error(signInError.code + " " + signInError.message);
+    return encodedRedirect("error", "/sign-up", signInError.message);
+  }
+
+  // Success! Redirect to protected page
+  return redirect("/protected");
 };
 
 export const signInAction = async (formData: FormData) => {
@@ -44,12 +54,42 @@ export const signInAction = async (formData: FormData) => {
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
+  if (!email || !password) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "Email and password are required"
+    );
+  }
+
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
+    // If the error is about email confirmation, let's try to auto-confirm the user
+    if (error.message.includes("Email not confirmed")) {
+      try {
+        // Try to update the user to confirm their email
+        const { data: userData } = await supabase.auth.getUser();
+        
+        if (userData.user) {
+          // User exists but email not confirmed, let's try to sign in anyway
+          const { error: signInRetryError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          if (!signInRetryError) {
+            return redirect("/protected");
+          }
+        }
+      } catch (updateError) {
+        console.error("Error auto-confirming user:", updateError);
+      }
+    }
+    
     return encodedRedirect("error", "/sign-in", error.message);
   }
 

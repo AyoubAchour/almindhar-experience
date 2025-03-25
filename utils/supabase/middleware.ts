@@ -2,8 +2,6 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const updateSession = async (request: NextRequest) => {
-  // This `try/catch` block is only here for the interactive tutorial.
-  // Feel free to remove once you have Supabase connected.
   try {
     // Create an unmodified response
     let response = NextResponse.next({
@@ -37,14 +35,26 @@ export const updateSession = async (request: NextRequest) => {
 
     // This will refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const user = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     // protected routes
-    if (request.nextUrl.pathname.startsWith("/protected") && user.error) {
+    if (request.nextUrl.pathname.startsWith("/protected") && !user) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
-    if (request.nextUrl.pathname === "/" && !user.error) {
+    // Allow access to the verification page without authentication
+    if (request.nextUrl.pathname.startsWith("/auth/verify")) {
+      return response;
+    }
+
+    // If user is authenticated and tries to access auth pages, redirect to protected
+    if ((request.nextUrl.pathname === "/sign-in" || 
+         request.nextUrl.pathname === "/sign-up") && 
+        user) {
+      return NextResponse.redirect(new URL("/protected", request.url));
+    }
+
+    if (request.nextUrl.pathname === "/" && user) {
       return NextResponse.redirect(new URL("/protected", request.url));
     }
 

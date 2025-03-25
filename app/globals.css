@@ -67,3 +67,234 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Blob Animation */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Animation delay classes */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Animated Border Button */
+@keyframes border-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes text-shimmer {
+  0% {
+    background-position: -100% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Navbar Animation */
+@keyframes navbar-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@layer utilities {
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+  .animation-delay-6000 {
+    animation-delay: 6s;
+  }
+  
+  .animated-border-button {
+    position: relative;
+    color: black;
+    background: transparent;
+    border: none;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .animated-border-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    background: linear-gradient(90deg, #4f46e5, #7e22ce, #db2777, #4f46e5) border-box;
+    background-size: 300% 100%;
+    border-radius: var(--radius);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: border-animation 4s ease infinite;
+    pointer-events: none;
+  }
+  
+  .animated-text {
+    background: linear-gradient(90deg, #4f46e5, #7e22ce, #db2777, #4f46e5);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: text-shimmer 4s ease infinite;
+    transition: all 0.3s ease;
+  }
+  
+  .animated-border-button:hover .animated-text {
+    animation-duration: 1.5s;
+    color: white;
+    -webkit-text-fill-color: white;
+  }
+  
+  .animated-border-button:hover::before {
+    animation-duration: 1.5s;
+  }
+  
+  .animated-border-button:hover {
+    background: linear-gradient(to bottom right, #4f46e5, #7e22ce);
+    color: white;
+  }
+  
+  /* Modern Navbar Styles */
+  .modern-navbar {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-gradient {
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0.1), rgba(126, 34, 206, 0.1), rgba(219, 39, 119, 0.1));
+    background-size: 200% 100%;
+    animation: navbar-gradient 15s ease infinite;
+  }
+  
+  .nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background: linear-gradient(90deg, #4f46e5, #7e22ce, #db2777);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+  }
+  
+  .nav-link:hover {
+    transform: translateY(-2px);
+  }
+  
+  .brand-text {
+    position: relative;
+    font-weight: 700;
+  }
+  
+  .brand-text::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(90deg, #4f46e5, #7e22ce, #db2777);
+    opacity: 0.2;
+    z-index: -1;
+    transform: skewX(-15deg);
+  }
+  
+  .nav-button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      rgba(79, 70, 229, 0.2), 
+      rgba(126, 34, 206, 0.2), 
+      rgba(219, 39, 119, 0.2)
+    );
+    transition: all 0.4s ease;
+  }
+  
+  .nav-button:hover::before {
+    left: 0;
+  }
+  
+  .logo-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}

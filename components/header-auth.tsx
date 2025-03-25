@@ -32,7 +32,7 @@ export default async function AuthButton() {
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >
-              <Link href="/sign-in">Sign in</Link>
+              <Link href="/sign-in">Se connecter</Link>
             </Button>
             <Button
               asChild
@@ -41,7 +41,7 @@ export default async function AuthButton() {
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >
-              <Link href="/sign-up">Sign up</Link>
+              <Link href="/sign-up">S'inscrire</Link>
             </Button>
           </div>
         </div>
@@ -50,20 +50,20 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+      <span className="text-gray-800">Bonjour, {user.email}!</span>
       <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
+        <Button type="submit" className="border border-indigo-600 bg-transparent hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-lg px-5 py-2 transition-all duration-300">
+          Se déconnecter
         </Button>
       </form>
     </div>
   ) : (
-    <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
-        <Link href="/sign-in">Sign in</Link>
+    <div className="flex gap-3">
+      <Button asChild className="border border-indigo-600 bg-transparent hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-lg px-5 py-2 transition-all duration-300">
+        <Link href="/sign-in">Se connecter</Link>
       </Button>
-      <Button asChild size="sm" variant={"default"}>
-        <Link href="/sign-up">Sign up</Link>
+      <Button asChild className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white rounded-lg px-5 py-2 shadow-md hover:shadow-lg hover:translate-y-[-1px] transition-all duration-300">
+        <Link href="/sign-up">S'inscrire</Link>
       </Button>
     </div>
   );
