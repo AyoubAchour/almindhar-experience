@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect, useMemo, useCallback } from "react";
+import { Suspense, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Experience } from "@/types";
 import { ClientExperienceFilter } from "@/components/experiences/experience-filter-client";
 import { ClientExperienceSearch } from "@/components/experiences/experience-search-client";
@@ -31,6 +31,9 @@ export default function ClientComponentsWrapper({
   // Local state for search query to prevent re-renders
   const [searchQueryState, setSearchQueryState] = useState("");
   
+  // Ref to track if we've already redirected to prevent infinite loops
+  const hasRedirectedRef = useRef(false);
+  
   // Parse search parameters once
   const searchQuery = useMemo(() => searchParams.get("q") ?? "", [searchParams]);
   
@@ -46,8 +49,11 @@ export default function ClientComponentsWrapper({
                               !searchParams.has("q") && !searchParams.has("difficulty") && 
                               !searchParams.has("location") && !searchParams.has("game");
     
-    // If we detect default filters without user interaction, redirect to clean URL
-    if (hasDefaultFilters) {
+    // Only redirect if we haven't already redirected and there are default filters
+    if (hasDefaultFilters && !hasRedirectedRef.current) {
+      // Mark that we've performed a redirect
+      hasRedirectedRef.current = true;
+      
       // Use setTimeout to avoid React hydration issues
       setTimeout(() => {
         router.replace("/experiences", { scroll: false });
@@ -88,6 +94,13 @@ export default function ClientComponentsWrapper({
       location,
     };
   }, [searchParams, priceRange.min, priceRange.max, router]);
+  
+  // Reset the redirect flag when the component unmounts
+  useEffect(() => {
+    return () => {
+      hasRedirectedRef.current = false;
+    };
+  }, []);
   
   // Filter experiences client-side
   const filteredExperiences = useMemo(() => {
