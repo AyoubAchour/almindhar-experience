@@ -1,0 +1,70 @@
+import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import Link from "next/link";
+import { createClient } from "@/utils/supabase/server";
+import { Button } from "./ui/button";
+import ClientHeaderUserMenu from "./ClientHeaderUserMenu";
+
+export default async function AuthButton() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!hasEnvVars) {
+    return (
+      <>
+        <div className="flex gap-4 items-center">
+          <div className="flex gap-2">
+            <Button
+              asChild
+              size="sm"
+              variant={"outline"}
+              disabled
+              className="opacity-75 cursor-none pointer-events-none"
+            >
+              <Link href="/sign-in">Se connecter</Link>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              variant={"default"}
+              disabled
+              className="opacity-75 cursor-none pointer-events-none"
+            >
+              <Link href="/sign-up">S'inscrire</Link>
+            </Button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (user) {
+    // Fetch profile data for greeting and avatar
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('full_name, avatar_url')
+      .eq('id', user.id)
+      .single();
+
+    console.log('Server fetched profile:', profile);
+    const fullName = (profile?.full_name ?? user.email) as string;
+    const avatarUrl = (profile?.avatar_url ?? '') as string;
+    return (
+      <ClientHeaderUserMenu email={user.email ?? ''} />
+    );
+  }
+
+  // Unauthenticated UI
+  return (
+    <div className="flex gap-3">
+      <Button asChild className="border border-indigo-600 bg-transparent hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-lg px-5 py-2 transition-all duration-300">
+        <Link href="/sign-in">Se connecter</Link>
+      </Button>
+      <Button asChild className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white rounded-lg px-5 py-2 shadow-md hover:shadow-lg hover:translate-y-[-1px] transition-all duration-300">
+        <Link href="/sign-up">S'inscrire</Link>
+      </Button>
+    </div>
+  );
+}

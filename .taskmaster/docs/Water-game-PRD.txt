@@ -1,0 +1,237 @@
+<context>
+# Tabarka Treasures - Ocean Coral Diving Game
+
+## Overview
+Tabarka Treasures is an educational Phaser.js-based ocean game that celebrates Tabarka's rich coral diving tradition. Players control a diving basket/net as they ascend from the ocean depths, collecting traditional coral harvesting treasures while learning about Tabarka's maritime heritage. The game combines engaging gameplay with cultural education about Tunisia's famous coral diving history, traditional fishing practices, and Mediterranean marine life.
+
+**Problem it solves:** Provides an interactive way to learn about Tabarka's unique coral diving culture while offering entertaining gameplay.
+**Target audience:** Cultural experience visitors, tourists, and anyone interested in Tunisian maritime heritage.
+**Value:** Preserves and shares traditional knowledge while providing an engaging gaming experience.
+
+# Core Features
+
+## 1. Treasure Collection Gameplay
+**What it does:** Players control a diving basket/net that moves left and right to catch falling treasures while slowly ascending from ocean depths.
+**Why it's important:** Core gameplay loop that's simple, engaging, and accessible to all ages.
+**How it works:**
+- 5 treasure types: Red coral pieces, traditional diving tools, ancient pottery/amphoras, pearls & shells, historical coins
+- All treasures have equal value (keeping it simple initially)
+- Items fall at varying speeds and positions from the ocean surface
+
+## 2. Fish Obstacle System
+**What it does:** Fish swim horizontally across the screen and remove collected items from the basket when they collide with the player.
+**Why it's important:** Adds challenge and strategy - players must balance collecting vs avoiding obstacles.
+**How it works:** Fish move in predictable patterns, collision detection removes random items from basket.
+
+## 3. Cultural Education Integration
+**What it does:** Displays educational facts about Tabarka's coral diving tradition when players collect treasures.
+**Why it's important:** Fulfills the cultural learning objective of the experience.
+**How it works:** Short cultural tidbits appear briefly when items are collected (specific facts to be researched and defined).
+
+## 4. Ocean Environment
+**What it does:** Immersive underwater setting with coral reefs, marine life, and authentic Mediterranean atmosphere.
+**Why it's important:** Creates engaging visual context that reinforces the cultural theme.
+**How it works:** Scrolling background with ocean elements, coral formations, and ambient sea life animations.
+
+# User Experience
+
+## User Personas
+- **Primary:** Cultural experience visitors and tourists interested in Tabarka's heritage
+- **Secondary:** Casual gamers seeking educational entertainment
+- **Tertiary:** Older adults (simple controls and clear visuals)
+
+## Key User Flows
+1. **Game Start:** User selects difficulty mode (Easy/Medium/Hard) from mode selection screen
+2. **Gameplay:** 40-second session of collecting treasures while ascending and avoiding fish
+3. **Cultural Learning:** Brief educational facts appear when treasures are collected
+4. **Game End:** Score display with potential reward eligibility
+5. **Reward System:** Qualifying scores unlock discount coupons (5%/10%/15% based on difficulty)
+
+## Game Mechanics
+- **Controls:** Left/Right arrow keys for basket movement
+- **Movement:** TBD - instant vs momentum-based movement (to be tested during development)
+- **Ascent:** Constant speed that increases with difficulty mode
+- **Duration:** Fixed 40-second sessions
+- **Scoring:** Points awarded per treasure collected
+- **Difficulty Modes:**
+  - Easy: Slow ascent, fewer fish, 5% discount reward
+  - Medium: Moderate ascent, normal fish frequency, 10% discount reward
+  - Hard: Fast ascent, high fish frequency, 15% discount reward
+
+## Integration Requirements
+- **Rewards System:** Connect to existing coupon/discount system
+- **Badge System:** Award badges for achievements (first play, high scores, etc.)
+- **Score Tracking:** Store scores in game_scores table
+- **Experience Linking:** Associate with Tabarka experience in experiences table
+</context>
+<PRD>
+# Technical Architecture
+
+## System Components
+- **Frontend:** Phaser.js 3.90.0 game engine integrated with Next.js React components
+- **Game Structure:** Follow existing pattern `/app/games/tabarka-treasures/`
+  - `components/` - React wrapper components and UI elements
+  - `context/` - Game state management and context providers
+  - `hooks/` - Custom hooks for game logic and audio management
+  - `assets/` - Game data definitions and asset configurations
+
+## Data Models & Database Integration
+- **experiences table:** Link to existing Tabarka experience record
+- **game_scores table:** Store player scores and session data
+- **rewards table:** Manage discount coupons (5%/10%/15% based on difficulty)
+- **user_rewards table:** Track earned coupons per user
+- **badges/user_badges tables:** Achievement system integration
+
+## Game Architecture
+- **Phaser Game Instance:** Core game loop with scene management
+- **Asset Management:** Placeholder shapes initially (cubes, rectangles for treasures/obstacles)
+- **Physics System:** Basic collision detection for basket-fish and basket-treasure interactions
+- **State Management:** React context for score, difficulty mode, and game progress
+- **Audio System:** Deferred until after core gameplay implementation
+
+## APIs and Integrations
+- **Supabase Integration:** Existing database connection for scores and rewards
+- **Experience Linking:** Associate game with existing Tabarka experience
+- **Reward System:** Trigger discount coupon creation based on score thresholds
+
+# Development Roadmap
+
+## Phase 1: Basic Phaser.js Setup & Foundation (Small Increments)
+**Goal:** Get a working Phaser game with minimal functionality
+- **1.1** Create basic Phaser.js game instance with empty scene
+- **1.2** Add simple basket/net (rectangle shape) that responds to left/right arrow keys
+- **1.3** Test movement and ensure controls work properly
+- **1.4** Add basic falling objects (simple cubes) from top of screen
+- **1.5** Implement basic collision detection between basket and falling objects
+- **1.6** Add simple score counter (points per collected item)
+
+## Phase 2: Core Treasure Collection Mechanics
+**Goal:** Complete treasure collection gameplay loop
+- **2.1** Implement 5 different treasure types (different colored cubes initially)
+- **2.2** Add constant upward movement for basket (slow ascent)
+- **2.3** Implement 40-second game timer
+- **2.4** Add game end screen with final score
+- **2.5** Test complete gameplay loop thoroughly
+
+## Phase 3: Fish Obstacles & Challenge
+**Goal:** Add challenge and strategy elements
+- **3.1** Add fish obstacles (simple shapes moving horizontally)
+- **3.2** Implement collision detection between fish and basket
+- **3.3** Add logic to remove random items from basket on fish collision
+- **3.4** Test obstacle mechanics and balance difficulty
+
+## Phase 4: Difficulty Modes & Game Variations
+**Goal:** Multiple challenge levels
+- **4.1** Create mode selection screen (Easy/Medium/Hard)
+- **4.2** Implement variable ascent speeds per difficulty
+- **4.3** Adjust fish frequency based on difficulty mode
+- **4.4** Test all difficulty modes for proper balance
+
+## Phase 5: Database Integration & Rewards
+**Goal:** Connect to existing system
+- **5.1** Integrate with game_scores table for score storage
+- **5.2** Link to Tabarka experience (id: eb7a5889-b330-4338-8bb7-a7a8bcb61a5d)
+- **5.3** Create reward entries for 5%/10%/15% discounts based on score thresholds
+- **5.4** Implement badge system integration for achievements
+- **5.5** Test database operations and reward triggering
+
+## Phase 6: Cultural Education & Polish
+**Goal:** Educational content and final touches
+- **6.1** Add cultural facts display when treasures are collected
+- **6.2** Research and implement Tabarka coral diving historical information
+- **6.3** Improve UI/UX with better visual feedback
+- **6.4** Replace placeholder shapes with proper assets (when ready)
+- **6.5** Add audio system (background music and sound effects)
+
+# Logical Dependency Chain
+
+## Foundation Layer (Must be built first)
+1. **Phaser.js Game Setup** → Essential foundation for all game functionality
+2. **Basic Basket Movement** → Core player interaction, needed for all subsequent features
+3. **Falling Objects System** → Required before collision detection can be implemented
+
+## Core Gameplay Layer (Build upon foundation)
+4. **Collision Detection** → Enables treasure collection, prerequisite for scoring
+5. **Score System** → Needed before difficulty modes and rewards can be meaningful
+6. **Game Timer** → Required for complete game sessions and testing
+
+## Challenge Layer (Enhances core gameplay)
+7. **Fish Obstacles** → Adds strategy, requires collision detection to be working
+8. **Difficulty Modes** → Builds upon all previous systems to create variations
+
+## Integration Layer (Connects to existing system)
+9. **Database Integration** → Requires working score system and game completion
+10. **Rewards System** → Depends on score thresholds and database integration
+11. **Badge System** → Final layer that builds upon all game achievements
+
+## Polish Layer (Final enhancements)
+12. **Cultural Education** → Can be added once core gameplay is solid
+13. **Asset Replacement** → Visual improvements after functionality is complete
+14. **Audio System** → Final polish layer that doesn't affect core mechanics
+
+**Critical Path:** Steps 1-6 must be completed in order to have a playable game. Steps 7-8 add challenge. Steps 9-11 integrate with the platform. Steps 12-14 are polish and enhancement.
+
+# Risks and Mitigations
+
+## Technical Challenges
+**Risk:** Limited Phaser.js experience could lead to implementation difficulties
+**Mitigation:**
+- Break development into very small, testable increments
+- Test each feature thoroughly before moving to the next
+- Start with simplest possible implementations (basic shapes, minimal physics)
+- Research Phaser.js documentation and examples for each feature before implementation
+
+**Risk:** Collision detection complexity between multiple object types
+**Mitigation:**
+- Implement collision detection incrementally (basket-treasure first, then basket-fish)
+- Use Phaser's built-in physics system rather than custom collision logic
+- Test with simple shapes before adding complex interactions
+
+**Risk:** Performance issues with multiple falling objects and animations
+**Mitigation:**
+- Start with minimal objects and gradually increase
+- Use object pooling for falling treasures and fish
+- Monitor performance during development and optimize as needed
+
+## MVP Definition & Scope Management
+**Risk:** Feature creep leading to overly complex initial implementation
+**Mitigation:**
+- Strictly follow the phased approach outlined in roadmap
+- Phase 1-3 constitute the true MVP (basic treasure collection with obstacles)
+- Database integration and polish are enhancement phases, not MVP requirements
+
+**Risk:** Difficulty balancing game mechanics without extensive playtesting
+**Mitigation:**
+- Implement configurable parameters (speed, frequency, etc.) for easy adjustment
+- Test with placeholder values and iterate based on feedback
+- Focus on making the game functional first, balanced second
+
+## Integration & Platform Risks
+**Risk:** Database integration complexity with existing reward system
+**Mitigation:**
+- Study existing game implementations (camel-ride, medina-memory) for patterns
+- Test database operations in isolation before integrating with game
+- Use existing reward structure as template (points_required, discount_percent)
+
+# Appendix
+
+## Database Integration Details
+- **Target Experience:** "Plongée à Tabarka" (id: eb7a5889-b330-4338-8bb7-a7a8bcb61a5d)
+- **Reward Structure:** Create 3 reward tiers matching difficulty modes
+  - Easy Mode: 5% discount (low point threshold)
+  - Medium Mode: 10% discount (medium point threshold)
+  - Hard Mode: 15% discount (high point threshold)
+
+## Technical Specifications
+- **Phaser Version:** 3.90.0 (already installed)
+- **Game Resolution:** TBD (match existing games)
+- **Asset Format:** Initially simple geometric shapes, later replace with PNG/SVG assets
+- **Audio Format:** MP3 files (following existing game pattern)
+
+## Cultural Research Requirements
+- Tabarka coral diving historical practices
+- Traditional diving tools and techniques
+- Types of coral harvested in the region
+- Economic importance of coral trade to Tabarka
+- Modern conservation efforts and sustainable practices
+</PRD>
