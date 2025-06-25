@@ -46,7 +46,7 @@ export default async function GamesPage() {
       id: "medina-treasure",
       title: "Medina Treasure",
       description: "Cherchez des trésors cachés dans la médina de Tunis",
-      image: "",
+      image: "https://jogxouotwtbjhoioyofa.supabase.co/storage/v1/object/public/experiences//tunis-medina.jpg",
       isImplemented: true,
       experienceTag: "Médina de Tunis",
       tagColor: "bg-indigo-500",

@@ -75,7 +75,7 @@ const games = [
     title: "Medina Treasure",
     description: "Cherchez des trésors cachés dans la médina de Tunis",
     longDescription: "Medina Treasure vous emmène dans une chasse au trésor passionnante à travers les ruelles labyrinthiques de la médina de Tunis. Découvrez l'artisanat local, les monuments historiques et les spécialités culinaires tout en cherchant des indices qui vous mèneront au trésor caché. Une façon ludique de découvrir le cœur historique de la capitale tunisienne.",
-    image: "",
+    image: "https://jogxouotwtbjhoioyofa.supabase.co/storage/v1/object/public/experiences//tunis-medina.jpg",
     experienceTag: "Médina de Tunis",
     gameTag: "medina-memory",
     tagColor: "bg-indigo-500",
@@ -89,24 +89,7 @@ const games = [
       "Trouvez le trésor caché avant la fin du temps imparti"
     ],
   },
-  {
-    id: "djerba-adventure",
-    title: "Djerba Adventure",
-    description: "Explorez l'île de Djerba dans cette aventure virtuelle",
-    longDescription: "Djerba Adventure vous propose une exploration virtuelle de la magnifique île de Djerba. Découvrez ses plages paradisiaques, ses villages traditionnels, ses monuments historiques et sa riche culture. Participez à des mini-jeux représentant les activités typiques de l'île et collectez des souvenirs virtuels pour compléter votre album de voyage.",
-    image: "",
-    experienceTag: "Île de Djerba",
-    tagColor: "bg-blue-500",
-    scoreThreshold: 85,
-    discount: 20,
-    howToPlay: [
-      "Explorez la carte de l'île en cliquant sur les différents points d'intérêt",
-      "Participez aux mini-jeux dans chaque location",
-      "Collectez des souvenirs virtuels pour compléter votre album",
-      "Découvrez tous les sites pour terminer l'aventure"
-    ],
-    isImplemented: false,
-  },
+
   {
     id: "tabarka-treasures",
     title: "Tabarka Treasures",

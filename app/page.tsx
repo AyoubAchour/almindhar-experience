@@ -231,93 +231,103 @@ export default async function Home() {
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              {/* Desert Rider Game Card */}
-              <div className="relative h-48 rounded-xl overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
-                <Image 
-                  src="/game-1.jpg" 
-                  alt="Desert Rider" 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 flex flex-col items-center justify-end p-4">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-indigo-600/80 rounded-full p-3 transform transition-transform duration-300 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                      </svg>
+              {/* Using the same game data as the games page, but only showing 4 cards */}
+              {[
+                {
+                  id: "desert-rider",
+                  title: "Desert Rider",
+                  description: "Simulez une balade à dos de chameau dans le désert tunisien",
+                  image: "https://jogxouotwtbjhoioyofa.supabase.co/storage/v1/object/public/experiences//sahara-desert.jpg",
+                  isImplemented: true,
+                  experienceTag: "Désert du Sahara",
+                  tagColor: "bg-orange-500",
+                },
+                {
+                  id: "carthage-explorer",
+                  title: "Carthage Explorer",
+                  description: "Explorez virtuellement les ruines historiques de Carthage",
+                  image: "",
+                  isImplemented: false,
+                  experienceTag: "Ruines de Carthage",
+                  tagColor: "bg-green-500",
+                },
+                {
+                  id: "medina-treasure",
+                  title: "Medina Treasure",
+                  description: "Cherchez des trésors cachés dans la médina de Tunis",
+                  image: "https://jogxouotwtbjhoioyofa.supabase.co/storage/v1/object/public/experiences//tunis-medina.jpg",
+                  isImplemented: true,
+                  experienceTag: "Médina de Tunis",
+                  tagColor: "bg-indigo-500",
+                },
+                                 {
+                   id: "tabarka-treasures",
+                   title: "Tabarka Treasures",
+                   description: "Plongez dans les eaux de Tabarka et collectez des trésors marins",
+                   image: "https://jogxouotwtbjhoioyofa.supabase.co/storage/v1/object/public/experiences/tabarka-diving.jpg",
+                   isImplemented: true,
+                   experienceTag: "Plongée à Tabarka",
+                   tagColor: "bg-blue-500",
+                 }
+              ].map((game) => (
+                game.isImplemented ? (
+                  <Link
+                    key={game.id}
+                    href={`/games/${game.id}`}
+                    className="relative h-48 rounded-xl overflow-hidden group transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    tabIndex={0}
+                    aria-label={`Jouer à ${game.title}`}
+                  >
+                    {game.image && (
+                      <Image
+                        src={game.image}
+                        alt={game.experienceTag}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 flex flex-col items-center justify-end p-4">
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-indigo-600/80 rounded-full p-3 transform transition-transform duration-300 group-hover:scale-110">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                          </svg>
+                        </div>
+                      </div>
+                      <span className={`${game.tagColor} text-white text-xs font-bold px-2 py-0.5 rounded-full absolute top-3 right-3`}>
+                        {game.experienceTag}
+                      </span>
+                      <h4 className="text-white font-bold text-lg mb-1 z-10">{game.experienceTag}</h4>
+                      <p className="text-gray-300 text-sm z-10">{game.description}</p>
+                    </div>
+                  </Link>
+                ) : (
+                  <div
+                    key={game.id}
+                    className="relative h-48 rounded-xl overflow-hidden group transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl cursor-not-allowed opacity-70"
+                    aria-disabled="true"
+                  >
+                    {game.image && (
+                      <Image
+                        src={game.image}
+                        alt={game.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-20">
+                      <span className="text-white text-2xl font-bold text-center">Bientôt Disponible</span>
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 flex flex-col items-center justify-end p-4 opacity-50">
+                      <span className={`${game.tagColor} text-white text-xs font-bold px-2 py-0.5 rounded-full absolute top-3 right-3`}>
+                        {game.experienceTag}
+                      </span>
+                      <h4 className="text-white font-bold text-lg mb-1 z-10">{game.title}</h4>
+                      <p className="text-gray-300 text-sm z-10">{game.description}</p>
                     </div>
                   </div>
-                  <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full absolute top-3 right-3">Désert du Sahara</span>
-                  <h4 className="text-white font-bold text-lg mb-1 z-10">Desert Rider</h4>
-                  <p className="text-gray-300 text-sm z-10">Simulez une balade à dos de chameau dans le désert tunisien</p>
-                </div>
-              </div>
-              
-              {/* Carthage Explorer Game Card */}
-              <div className="relative h-48 rounded-xl overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
-                <Image 
-                  src="/game-2.jpg" 
-                  alt="Carthage Explorer" 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 flex flex-col items-center justify-end p-4">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-indigo-600/80 rounded-full p-3 transform transition-transform duration-300 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                      </svg>
-                    </div>
-                  </div>
-                  <span className="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full absolute top-3 right-3">Ruines de Carthage</span>
-                  <h4 className="text-white font-bold text-lg mb-1 z-10">Carthage Explorer</h4>
-                  <p className="text-gray-300 text-sm z-10">Explorez virtuellement les ruines historiques de Carthage</p>
-                </div>
-              </div>
-              
-              {/* Medina Treasure Game Card */}
-              <div className="relative h-48 rounded-xl overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
-                <Image 
-                  src="/game-3.jpg" 
-                  alt="Medina Treasure" 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 flex flex-col items-center justify-end p-4">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-indigo-600/80 rounded-full p-3 transform transition-transform duration-300 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                      </svg>
-                    </div>
-                  </div>
-                  <span className="bg-indigo-500 text-white text-xs font-bold px-2 py-0.5 rounded-full absolute top-3 right-3">Médina de Tunis</span>
-                  <h4 className="text-white font-bold text-lg mb-1 z-10">Medina Treasure</h4>
-                  <p className="text-gray-300 text-sm z-10">Cherchez des trésors cachés dans la médina de Tunis</p>
-                </div>
-              </div>
-              
-              {/* Djerba Adventure Game Card */}
-              <div className="relative h-48 rounded-xl overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
-                <Image 
-                  src="/game-4.jpg" 
-                  alt="Djerba Adventure" 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 flex flex-col items-center justify-end p-4">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-indigo-600/80 rounded-full p-3 transform transition-transform duration-300 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                      </svg>
-                    </div>
-                  </div>
-                  <span className="bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full absolute top-3 right-3">Île de Djerba</span>
-                  <h4 className="text-white font-bold text-lg mb-1 z-10">Djerba Adventure</h4>
-                  <p className="text-gray-300 text-sm z-10">Explorez l'île de Djerba dans cette aventure virtuelle</p>
-                </div>
-              </div>
+                )
+              ))}
             </div>
           </div>
           
@@ -478,18 +488,8 @@ export default async function Home() {
       </section>
 
       {/* Enhanced CTA Section */}
-      <section className="py-24 px-4 relative w-full overflow-hidden">
-        {/* Background image with overlay */}
-        <div className="absolute inset-0">
-          <Image 
-            src="/cta-bg.jpg" 
-            alt="Paysage Tunisien" 
-            fill 
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/60"></div>
-        </div>
+      <section className="py-24 px-4 relative w-full overflow-hidden bg-gradient-to-r from-indigo-950 via-purple-950 to-pink-950">
+        {/* Background gradient - no image needed */}
         
         {/* Decorative elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-600 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob"></div>
