@@ -30,7 +30,8 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (error) {
-    console.error(error.code + " " + error.message);
+    // Log error securely without exposing sensitive details
+    console.error("Sign up error:", error.code);
     return encodedRedirect("error", "/sign-up", error.message);
   }
 
@@ -41,7 +42,7 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (signInError) {
-    console.error(signInError.code + " " + signInError.message);
+    console.error("Auto sign-in error:", signInError.code);
     return encodedRedirect("error", "/sign-up", signInError.message);
   }
 
@@ -137,7 +138,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   const confirmPassword = formData.get("confirmPassword") as string;
 
   if (!password || !confirmPassword) {
-    encodedRedirect(
+    return encodedRedirect(
       "error",
       "/protected/reset-password",
       "Password and confirm password are required",
@@ -145,10 +146,19 @@ export const resetPasswordAction = async (formData: FormData) => {
   }
 
   if (password !== confirmPassword) {
-    encodedRedirect(
+    return encodedRedirect(
       "error",
       "/protected/reset-password",
       "Passwords do not match",
+    );
+  }
+
+  // Validate password strength
+  if (password.length < 8) {
+    return encodedRedirect(
+      "error",
+      "/protected/reset-password",
+      "Password must be at least 8 characters long",
     );
   }
 
@@ -157,14 +167,14 @@ export const resetPasswordAction = async (formData: FormData) => {
   });
 
   if (error) {
-    encodedRedirect(
+    return encodedRedirect(
       "error",
       "/protected/reset-password",
       "Password update failed",
     );
   }
 
-  encodedRedirect("success", "/protected/reset-password", "Password updated");
+  return encodedRedirect("success", "/protected/reset-password", "Password updated");
 };
 
 export const signOutAction = async () => {
