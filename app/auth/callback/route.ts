@@ -16,7 +16,16 @@ export async function GET(request: Request) {
   }
 
   if (redirectTo) {
-    return NextResponse.redirect(`${origin}${redirectTo}`);
+    // Validate redirect URL to prevent open redirect attacks
+    try {
+      const redirectUrl = new URL(redirectTo, origin);
+      // Only allow redirects to the same origin
+      if (redirectUrl.origin === origin) {
+        return NextResponse.redirect(redirectUrl.toString());
+      }
+    } catch {
+      // Invalid URL, fall through to default redirect
+    }
   }
 
   // URL to redirect to after sign up process completes

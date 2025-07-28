@@ -77,6 +77,26 @@ export default function CompleteProfilePage() {
   // Handle avatar file selection and preview
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
+    handleFileSelect(e);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Format de fichier non supporté. Utilisez JPG, PNG, GIF ou WebP.");
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        setError("La taille du fichier ne doit pas dépasser 5MB.");
+        return;
+      }
+    }
     handleFile(file);
   };
 
@@ -117,6 +137,19 @@ export default function CompleteProfilePage() {
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
       if (file.type.startsWith('image/')) {
+        // Validate file type and size
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          setError("Format de fichier non supporté. Utilisez JPG, PNG, GIF ou WebP.");
+          return;
+        }
+        
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          setError("La taille du fichier ne doit pas dépasser 5MB.");
+          return;
+        }
+        
         handleFile(file);
       } else {
         setError("Veuillez choisir un fichier image");
@@ -143,7 +176,23 @@ export default function CompleteProfilePage() {
 
   // Upload avatar to Supabase Storage
   async function uploadAvatar(file: File): Promise<string> {
-    const fileExt = file.name.split('.').pop();
+    // Additional validation before upload
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("Type de fichier non autorisé");
+    }
+    
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new Error("Fichier trop volumineux");
+    }
+    
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    if (!fileExt || !allowedExtensions.includes(fileExt)) {
+      throw new Error("Extension de fichier non autorisée");
+    }
+    
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
     const filePath = `${fileName}`;
     // Use Supabase client from the browser
