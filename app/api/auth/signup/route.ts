@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { rateLimit } from '@/utils/rate-limit';
 
 // Helper function to handle sign-in attempt
 async function attemptSignIn(
@@ -37,8 +38,23 @@ async function createUserProfile(
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const rateLimitResult = rateLimit(request, 5, 15 * 60 * 1000); // 5 attempts per 15 minutes
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Too many signup attempts. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString(),
+          }
+        }
+      );
+    }
+
     const { email, password } = await request.json();
     
+    // Enhanced input validation
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email and password are required' },
@@ -46,11 +62,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || email.length > 254) {
+      return NextResponse.json(
+        { error: 'Please provide a valid email address' },
+        { status: 400 }
+      );
+    }
+
+    // Password validation
+    if (password.length < 8 || password.length > 128) {
+      return NextResponse.json(
+        { error: 'Password must be between 8 and 128 characters long' },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize email
+    const sanitizedEmail = email.toLowerCase().trim();
+
     const supabase = await createClient();
     
     // Create the user with auto-confirmation
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: sanitizedEmail,
       password,
       options: {
         data: {
@@ -62,7 +98,7 @@ export async function POST(request: NextRequest) {
     // Handle email confirmation errors by trying to sign in directly
     if (error && (error.message.includes("Email not confirmed") || 
                   error.message.includes("already registered"))) {
-      const { data: signInData, error: signInError } = await attemptSignIn(supabase, email, password);
+      const { data: signInData, error: signInError } = await attemptSignIn(supabase, sanitizedEmail, password);
       
       if (signInError) {
         return NextResponse.json({ 
@@ -86,10 +122,10 @@ export async function POST(request: NextRequest) {
     // If the user was created successfully
     if (data?.user) {
       // Create a user profile
-      await createUserProfile(supabase, data.user.id, email);
+      await createUserProfile(supabase, data.user.id, sanitizedEmail);
       
       // Sign in the user
-      const { error: signInError } = await attemptSignIn(supabase, email, password);
+      const { error: signInError } = await attemptSignIn(supabase, sanitizedEmail, password);
 
       if (signInError) {
         console.error('Error signing in user:', signInError);

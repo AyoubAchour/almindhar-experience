@@ -16,29 +16,38 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const { full_name, avatar_url, preferences } = body;
 
-    // Validation
+    // Enhanced validation
     if (
       !full_name ||
       typeof full_name !== 'string' ||
+      full_name.trim().length === 0 ||
+      full_name.length > 100 ||
       !avatar_url ||
       typeof avatar_url !== 'string' ||
       !/^https?:\/\//.test(avatar_url) ||
+      avatar_url.length > 500 ||
       !Array.isArray(preferences) ||
-      preferences.length === 0
+      preferences.length === 0 ||
+      preferences.length > 20 ||
+      preferences.some(pref => typeof pref !== 'string' || pref.length > 50)
     ) {
       return NextResponse.json(
-        { error: 'All fields are required: full_name, avatar_url (valid URL), and at least one preference.' },
+        { error: 'Invalid input: full_name must be 1-100 characters, avatar_url must be a valid URL under 500 characters, and preferences must be an array of 1-20 strings under 50 characters each.' },
         { status: 400 }
       );
     }
+
+    // Sanitize input
+    const sanitizedFullName = full_name.trim();
+    const sanitizedPreferences = preferences.map(pref => pref.trim()).filter(pref => pref.length > 0);
 
     // Update profile
     const { data: profile, error } = await supabase
       .from('user_profiles')
       .update({
-        full_name,
+        full_name: sanitizedFullName,
         avatar_url,
-        preferences,
+        preferences: sanitizedPreferences,
         profile_complete: true,
         updated_at: new Date().toISOString(),
       })

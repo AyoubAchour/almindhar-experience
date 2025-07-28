@@ -597,40 +597,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
-      <script dangerouslySetInnerHTML={{ __html: `
-        document.addEventListener('DOMContentLoaded', function() {
-          const descContainers = document.querySelectorAll('.h-12.mb-4.overflow-hidden');
-          
-          descContainers.forEach(container => {
-            const paragraph = container.querySelector('p');
-            const expandBtn = container.querySelector('.expandBtn');
-            
-            // Check if content overflows and show expand button if needed
-            if (paragraph.scrollHeight > container.clientHeight) {
-              expandBtn.classList.remove('hidden');
-              
-              // Add click event to expand button
-              expandBtn.addEventListener('click', function() {
-                if (container.classList.contains('h-12')) {
-                  // Expand
-                  container.classList.remove('h-12');
-                  container.classList.add('h-auto');
-                  expandBtn.textContent = 'Voir moins';
-                  expandBtn.classList.add('bottom-auto');
-                  expandBtn.classList.add('mt-1');
-                } else {
-                  // Collapse
-                  container.classList.remove('h-auto');
-                  container.classList.add('h-12');
-                  expandBtn.textContent = 'Voir plus...';
-                  expandBtn.classList.remove('bottom-auto');
-                  expandBtn.classList.remove('mt-1');
-                }
-              });
-            }
-          });
-        });
-      `}} />
+
     </div>
   );
 }
